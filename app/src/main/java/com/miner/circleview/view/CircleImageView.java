@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -29,7 +30,7 @@ public class CircleImageView extends ImageView {
 
     //------边框常量相关
     private static final int BORDER_COLOR_DEFAULT = 123;
-    private static final int BORDER_WIDTH_DEFALUT = 8;
+    private static final int BORDER_WIDTH_DEFALUT = 2;
     private static final String TAG = "CircleImageView";
 
     //------图片常量相关
@@ -70,8 +71,8 @@ public class CircleImageView extends ImageView {
         if (null != attrs) {
             TypedArray typeArray = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyleAttr, 0);
 
-            mBorderWidth = typeArray.getDimensionPixelOffset(R.styleable.CircleImageView_border_width,BORDER_WIDTH_DEFALUT);
-            mBorderColor = typeArray.getColor(R.styleable.CircleImageView_border_color,BORDER_COLOR_DEFAULT);
+            mBorderWidth = typeArray.getDimensionPixelOffset(R.styleable.CircleImageView_border_width, BORDER_WIDTH_DEFALUT);
+            mBorderColor = typeArray.getColor(R.styleable.CircleImageView_border_color, BORDER_COLOR_DEFAULT);
 
             typeArray.recycle();
         }
@@ -199,27 +200,40 @@ public class CircleImageView extends ImageView {
      * 更新矩阵
      */
     private void updateShaderMatrix() {
+
         float scale = 0;//缩放比
         float dx = 0;//矩阵平移偏移量
         float dy = 0;
 
         mBitmapMatrix.set(null);
 
-        //以高做为缩放参考
-        if (mBorderRect.width() * mBitmapHeight > mBorderRect.height() * mBitmapWidth) {
+        /*
+            w1:图片的宽
+            h1:图片的高
+
+            w:原点的宽
+            h:原点的高
+
+            w/w1 > h/h1,以h作为缩放比
+
+            w/w1 < h/h1,以w作为缩放比
+
+            画图可证
+         */
+        if (mBorderRect.width() * mBitmapHeight < mBorderRect.height() * mBitmapWidth) {
 
             scale = mBitmapRect.height() / mBitmapHeight;
-            dx = (mBitmapRect.width() - mBitmapWidth * scale) * 0.5f;
-            Log.d(TAG, "缩放Y");
+            dx = (mBitmapRect.width() - mBitmapWidth * scale)*.5f;
+
+            Log.d(TAG,"trans dx");
         } else {
             scale = mBitmapRect.width() / mBitmapWidth;
-            dy = (mBitmapRect.height() - mBitmapHeight * scale) * 0.5f;
-            Log.d(TAG, "缩放X");
+            dy = (mBitmapRect.height() - mBitmapHeight * scale)*.5f;
+            Log.d(TAG,"trans dy");
         }
 
         mBitmapMatrix.setScale(scale, scale);
-        mBitmapMatrix.postTranslate((int) (dx + 0.5f) + mBitmapRect.left, (int) (dy + 0.5f) + mBitmapRect.top);
-
+        mBitmapMatrix.postTranslate((int) (dx +.5f)+ mBitmapRect.left, (int) (dy+.5f) + mBitmapRect.top);
         mBitmapShader.setLocalMatrix(mBitmapMatrix);
     }
 
@@ -245,9 +259,9 @@ public class CircleImageView extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
 
         //绘画边框
+//        canvas.drawRect(mBitmapRect,mBitmapPaint);
         canvas.drawCircle(mBitmapRect.centerX(), mBitmapRect.centerY(), mBitmapRadius, mBitmapPaint);
         canvas.drawCircle(mBorderRect.centerX(), mBorderRect.centerY(), mBorderRadius, mBorderPaint);
     }
@@ -259,8 +273,7 @@ public class CircleImageView extends ImageView {
         setup();
     }
 
-    public void setBorderWidth(int width)
-    {
+    public void setBorderWidth(int width) {
         this.mBorderWidth = width;
         setup();
     }

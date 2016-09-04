@@ -26,10 +26,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:background="#000"
+        android:background="#fff"
         android:padding="10dp"
         app:border_color="#0ff"
         app:border_width="6dp"
-        android:src="@mipmap/girl" />
+        android:src="@mipmap/girl2" />
 
 </LinearLayout>

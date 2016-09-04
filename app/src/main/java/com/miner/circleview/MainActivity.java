@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imgView01 = (CircleImageView) findViewById(R.id.circleImgView01);
+//        imgView01 = (CircleImageView) findViewById(R.id.circleImgView01);
         imgView02 = (CircleImageView) findViewById(R.id.circleImgView02);
     }
 }
